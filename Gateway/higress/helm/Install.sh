@@ -7,6 +7,7 @@ cd /home/kubernetes/higress
 
 helm repo add higress.io https://higress.io/helm-charts
 
+# 没有LB的情况, 需要添加higress-core.gateway.hostNetwork，让 Higress 监听本机端口，再通过其他软/硬负载均衡器转发给固定机器 IP:
 helm install higress higress.io/higress \
   -n higress-system \
   --create-namespace \
@@ -16,9 +17,10 @@ helm install higress higress.io/higress \
   --set higress-core.controller.resources.requests.memory=1Gi \
   --set higress-core.gateway.replicas=1 \
   --set higress-core.controller.replicas=1 \
+  --set higress-core.gateway.hostNetwork=true
 
 # remove
-helm uninstall higress -n higress-system
+#helm uninstall higress -n higress-system
 
 # helm install higress . -n higress --create-namespace
 
@@ -46,9 +48,6 @@ helm uninstall higress -n higress-system
 #                  number: 8080
 #EOF
 #kubectl apply -f higress-console.yaml
-
-helm install higress -n higress . --create-namespace
-k get svc -n higress
 
 # 安装 istio-base higress基于isitio（可选）
 mkdir -p cd /home/kubernetes/istio

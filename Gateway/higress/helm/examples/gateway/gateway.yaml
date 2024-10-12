@@ -1,0 +1,16 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: higress-gateway
+  namespace: higress-system
+spec:
+  gatewayClassName: higress-gateway
+  listeners:
+    - name: default-tcp
+      protocol: TCP
+      port: 9000
+      allowedRoutes:
+        namespaces:
+          from: All
+        kinds:
+          - kind: TCPRoute
