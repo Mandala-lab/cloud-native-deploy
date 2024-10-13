@@ -2,8 +2,15 @@
 # 启用 POSIX 模式并设置严格的错误处理机制
 set -o posix errexit -o pipefail
 
+mkdir -p /home/kubernetes/jaeger
+cd /home/kubernetes/jaeger
+
 # 安装operator
-wget https://github.com/jaegertracing/jaeger-operator/releases/download/v1.60.0/jaeger-operator.yaml
+kubectl create ns observability
+# https://github.com/jaegertracing/jaeger-operator/releases
+VERSION="v1.62.0"
+wget https://github.com/jaegertracing/jaeger-operator/releases/download/${VERSION}/jaeger-operator.yaml
+kubectl apply -f jaeger-operator.yaml
 
 # 通过operator crd创建jaeger实例
 cat > jaeger.yml <<EOF

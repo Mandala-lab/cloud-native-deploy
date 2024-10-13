@@ -7,6 +7,7 @@ mkdir -p $path
 cd $path ||exit
 
 # 安装operator
+# https://github.com/open-telemetry/opentelemetry-operator
 wget https://github.com/open-telemetry/opentelemetry-operator/releases/latest/download/opentelemetry-operator.yaml
 kubectl apply -f opentelemetry-operator.yaml
 
@@ -40,14 +41,27 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-kubectl delete -f opentelemetry-collector.yml -n ${otel_collector_namespace}
+otel_collector_name="opentelemetry"
+otel_collector_namespace="observability"
+receivers_otel_grpc_url="0.0.0.0:4317"
+receivers_otel_http_url="0.0.0.0:4318"
+export_http_trace_url="http://node6.api-r.com:32087"
+export_grpc_trace_url="http://node6.api-r.com:30397"
+
+if kubectl get ns ${otel_collector_namespace}; then
+  echo "skip"
+else
+  kubectl create ns ${otel_collector_namespace}
+fi
+
+kubectl delete -f opentelemetry-collector.yml -n ${otel_collector_namespace} || true
 cat > opentelemetry-collector.yml <<EOF
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: ${otel_collector_name}
 spec:
-  config: |
+  config:
     # 接收器
     # 在启动otel-collector的服务器上所要接收的遥测数据
     # 例如: otlp, kafka, opencensus, zipkin
@@ -77,7 +91,7 @@ spec:
     exporters:
       # 监听http链路,发送到jaeger
       otlphttp:
-        endpoint: ${export_trace_url}
+        endpoint: ${export_http_trace_url}
         tls:
           # 是否使用不安全的连接, 即HTTP明文传输
           insecure: true
@@ -96,6 +110,8 @@ spec:
           processors: [memory_limiter, batch]
           exporters: [otlphttp]
 EOF
-kubectl apply -f opentelemetry-collector.yml -n "${observability}"
-kubectl patch svc simplest-collector -n "${observability}" -p '{"spec":{"type":"NodePort"}}'
-kubectl get svc -n "${observability}"
+kubectl apply -f opentelemetry-collector.yml -n "${otel_collector_namespace}"
+
+kubectl get po -n "${otel_collector_namespace}"
+kubectl patch svc ${otel_collector_name}-collector -n "${otel_collector_namespace}" -p '{"spec":{"type":"NodePort"}}'
+kubectl get svc -n "${otel_collector_namespace}"

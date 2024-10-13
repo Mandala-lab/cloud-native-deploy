@@ -2,14 +2,17 @@
 # 启用 POSIX 模式并设置严格的错误处理机制
 set -o posix errexit -o pipefail
 
+mkdir -p /home/kubernetes/argocd
+cd /home/kubernetes/argocd
+
 # https://github.com/argoproj-labs/argocd-operator/releases
-export VERSION="v0.12.0"
-wget https://github.com/argoproj-labs/argocd-operator/archive/refs/tags/${VERSION}.zip
+#export VERSION="v0.12.0"
+#wget https://github.com/argoproj-labs/argocd-operator/archive/refs/tags/${VERSION}.zip
 
-apt install -y unzip
-unzip ${VERSION}.zip
+#apt install -y unzip
+#unzip ${VERSION}.zip
 
-cd argocd-operator-v${VERSION} || exit
+#cd argocd-operator-v${VERSION} || exit
 
 # OLM
 OLM_version=v0.28.0
@@ -24,22 +27,30 @@ kubectl get csv -n operators
 # 安装argocd实例
 export ns="argocd"
 kubectl create ns $ns
-kubectl create -f argocd-deploy.yaml -n $ns
+kubectl create -f ./argocd-deploy.yaml -n $ns
 # 如果需要再argocd-cm添加任何参数, 请编辑argocd.deploy.yaml的spec.extraConfig, 例如
 # spec:
 #   extraConfig:
 #     accounts.admin: "apiKey, login"
 
+OS="linux"
+ARCH="amd64"
+ARGO_CLI_VERSION="v2.12.4"
+wget -O argocd https://github.com/argoproj/argo-cd/releases/download/${ARGO_CLI_VERSION}/argocd-${OS}-${ARCH}
+mv argocd /usr/local/bin/argocd
+chmod +x /usr/local/bin/argocd
+
 # 获取密码
 echo "将default-argocd替换成你的argocd的名称"
-pwd=$(kubectl -n $ns get secret default-argocd-cluster -o jsonpath='{.data.admin\.password}' | base64 -d)
-# tVEO1vRShlfkWysUCuKTw432oXzmB7ZN
+pwd=$(kubectl -n $ns get secret argocd-cluster -o jsonpath='{.data.admin\.password}' | base64 -d)
+# bCGuMlvgYtd5UnRN9qZWhsDFI1PQ8B0H
 
 # CLI登录
 # $lb_ip:port: ip与端口
 # --insecure: 忽略TLS验证
 # --grpc-web
-lb_ip=$(kubectl get service example-argocd-server -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' -n $ns)
+#lb_ip=$(kubectl get service example-argocd-server -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' -n $ns)
+lb_ip="argocd.example.com:31258"
 argocd login \
 $lb_ip \
 --username admin \
