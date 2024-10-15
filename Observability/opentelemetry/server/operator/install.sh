@@ -11,6 +11,11 @@ cd $path ||exit
 wget https://github.com/open-telemetry/opentelemetry-operator/releases/latest/download/opentelemetry-operator.yaml
 kubectl apply -f opentelemetry-operator.yaml
 
+# 强制删除
+# kubectl delete crd/opentelemetrycollectors.opentelemetry.io --grace-period=0 --force
+# 如果不行, 尝试下行代码:
+# kubectl patch crd/opentelemetrycollectors.opentelemetry.io -p '{"metadata":{"finalizers":[]}}' --type=merge
+
 # 安装opentelemetry控制器实例
 
 declare otel_collector_name="opentelemetry"
@@ -55,6 +60,7 @@ else
 fi
 
 kubectl delete -f opentelemetry-collector.yml -n ${otel_collector_namespace} || true
+# v1beta1: https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/crd-changelog.md
 cat > opentelemetry-collector.yml <<EOF
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector

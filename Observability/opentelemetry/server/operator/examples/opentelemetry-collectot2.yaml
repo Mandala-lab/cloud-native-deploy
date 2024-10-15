@@ -1,9 +1,9 @@
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
-  name: opentelemetry
+  name: ${otel_collector_name}
 spec:
-  config: |
+  config:
     # 接收器
     # 在启动otel-collector的服务器上所要接收的遥测数据
     # 例如: otlp, kafka, opencensus, zipkin
@@ -11,9 +11,9 @@ spec:
       otlp:
         protocols:
           grpc:
-            endpoint: localhost:4317
+            endpoint: ${receivers_otel_grpc_url}
           http:
-            endpoint: localhost:4318
+            endpoint: ${receivers_otel_http_url}
 
     # 处理器
     # 将收集到的遥测数据进行处理
@@ -33,7 +33,7 @@ spec:
     exporters:
       # 监听http链路,发送到jaeger
       otlphttp:
-        endpoint: http://example:30495
+        endpoint: ${export_http_trace_url}
         tls:
           # 是否使用不安全的连接, 即HTTP明文传输
           insecure: true
