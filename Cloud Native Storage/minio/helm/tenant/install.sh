@@ -13,12 +13,24 @@ cd tenant
 # 修改values.yaml, 推荐修改pools.servers与pools.size
 # vi values.yaml
 
+# 全新安装
 helm install --namespace minio-tenant \
   --create-namespace tenant . \
   -f values.yaml
 
+# 更新安装
+#helm upgrade tenant . \
+#  --namespace minio-tenant \
+#  -f values.yaml
+
 kubectl get po -n minio-tenant -owide
 kubectl get svc -n minio-tenant
+
+# 获取账户密码
+kubectl get secrets -n minio-tenant \
+myminio-env-configuration \
+-ojsonpath='{.data.config\.env}' | base64 -d
+
 # NodePort
 kubectl patch svc myminio-console -n minio-tenant -p '{"spec":{"type":"NodePort"}}'
 # LoadBalancer

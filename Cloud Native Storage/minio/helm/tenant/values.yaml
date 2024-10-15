@@ -449,7 +449,8 @@ ingress:
     enabled: true
     ingressClassName: higress
     labels: { }
-    annotations: { }
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
     tls:
       - hosts:
         - minio-api.api-r.com
@@ -461,7 +462,8 @@ ingress:
     enabled: true
     ingressClassName: higress
     labels: { }
-    annotations: { }
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
     tls:
       - hosts:
           - minio-console.api-r.com
