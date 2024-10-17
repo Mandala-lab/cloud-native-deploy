@@ -4,6 +4,7 @@ set -o posix errexit -o pipefail
 # https://docs.kafka-ui.provectus.io/configuration/helm-charts/quick-start
 
 helm repo add kafka-ui https://provectus.github.io/kafka-ui-charts
+helm repo update
 helm pull kafka-ui/kafka-ui
 cd kafka-ui || exit
 

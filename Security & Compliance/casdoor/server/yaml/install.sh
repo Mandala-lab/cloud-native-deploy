@@ -2,6 +2,9 @@
 # 启用 POSIX 模式并设置严格的错误处理机制
 set -o posix errexit -o pipefail
 
+mkdir -p /home/kubernetes/casdoor
+cd /home/kubernetes/casdoor
+
 kubectl create ns casdoor
 
 cat > app.conf <<EOF
@@ -38,5 +41,6 @@ initDataFile = "./init_data.json"
 frontendBaseDir = "../casdoor"
 EOF
 
+kubectl get cm -n casdoor
 kubectl create cm app.conf --from-file app.conf -n casdoor
 kubectl apply -f casdoor.yaml -n casdoor

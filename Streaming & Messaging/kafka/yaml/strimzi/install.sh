@@ -5,11 +5,19 @@ set -o posix errexit -o pipefail
 mkdir -p /home/kubernetes/kafka
 cd /home/kubernetes/kafka
 
+# 入门: https://strimzi.io/quickstarts/
+
 kubectl create namespace kafka
 # 单机版kafka, 它声明了100g的pv, 需要节点有sc的存储支持
 # 更多的kafka安装:https://github.com/strimzi/strimzi-kafka-operator/tree/0.43.0/examples/kafka
-kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
+
+# 应用 Strimzi 安装文件，包括 ClusterRoles、ClusterRoleBindings 和一些自定义资源定义 （CRD）。
+# CRD 定义用于自定义资源（CR，例如 Kafka、KafkaTopic 等）的架构，您将用于管理 Kafka 集群、主题和用户
+wget 'https://strimzi.io/install/latest?namespace=kafka'
+mv 'latest?namespace=kafka' kafka.yml
+kubectl create -f kafka.yml -n kafka
 kubectl get pod -n kafka
+
 #创建 Apache Kafka 集群
 # 创建新的 Kafka 自定义资源以获取单节点 Apache Kafka 集群：
 # Apply the `Kafka` Cluster CR file

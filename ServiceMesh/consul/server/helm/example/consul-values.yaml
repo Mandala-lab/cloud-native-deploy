@@ -29,10 +29,8 @@ ui:
       http: 80
       https: 443
     nodePort:
-      http:
-        31080
-      https:
-        31443
+      http: 31080
+      https: 31443
   # Enables displaying metrics in the Consul UI.
   metrics:
     enabled: true

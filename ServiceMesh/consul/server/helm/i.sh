@@ -6,6 +6,7 @@ mkdir -p /home/kubernetes/consul
 cd /home/kubernetes/consul
 
 helm repo add hashicorp https://helm.releases.hashicorp.com
+helm repo update
 helm search repo hashicorp/consul
 
 helm pull hashicorp/consul
@@ -13,7 +14,6 @@ tar -zxvf consul-*.tgz
 cd consul/
 
 helm install consul . \
---set global.name=consul \
---create-namespace \
--f values.yaml \
---namespace consul
+  --create-namespace \
+  -f values.yaml \
+  --namespace consul
