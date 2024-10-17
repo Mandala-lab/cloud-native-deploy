@@ -5,46 +5,6 @@ set -o posix errexit -o pipefail
 mkdir -p /home/kubernetes/argocd
 cd /home/kubernetes/argocd
 
-# https://github.com/argoproj-labs/argocd-operator/releases
-#export VERSION="v0.12.0"
-#wget https://github.com/argoproj-labs/argocd-operator/archive/refs/tags/${VERSION}.zip
-
-#apt install -y unzip
-#unzip ${VERSION}.zip
-
-#cd argocd-operator-v${VERSION} || exit
-
-# OLM
-OLM_version=v0.28.0
-#curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_version}/install.sh | bash -s ${OLM_version}
-wget https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_version}/install.sh
-./install.sh ${OLM_version}
-
-# 安装操作员, 此 Operator 将安装在 “operators” 命名空间中，并可从集群中的所有命名空间中使用
-kubectl create -f https://operatorhub.io/install/argocd-operator.yaml
-kubectl get csv -n operators
-
-# 安装argocd实例
-export ns="argocd"
-kubectl create ns $ns
-kubectl create -f ./argocd-deploy.yaml -n $ns
-# 如果需要再argocd-cm添加任何参数, 请编辑argocd.deploy.yaml的spec.extraConfig, 例如
-# spec:
-#   extraConfig:
-#     accounts.admin: "apiKey, login"
-
-OS="linux"
-ARCH="amd64"
-ARGO_CLI_VERSION="v2.12.4"
-wget -O argocd https://github.com/argoproj/argo-cd/releases/download/${ARGO_CLI_VERSION}/argocd-${OS}-${ARCH}
-mv argocd /usr/local/bin/argocd
-chmod +x /usr/local/bin/argocd
-
-# 获取密码
-echo "将default-argocd替换成你的argocd的名称"
-pwd=$(kubectl -n $ns get secret argocd-cluster -o jsonpath='{.data.admin\.password}' | base64 -d)
-# bCGuMlvgYtd5UnRN9qZWhsDFI1PQ8B0H
-
 # CLI登录
 # $lb_ip:port: ip与端口
 # --insecure: 忽略TLS验证
@@ -60,11 +20,12 @@ $lb_ip \
 # 修改密码
 argocd account update-password
 
-# 列出当前集群上下文
-kubectl config get-contexts -o name
-
-# 添加集群权限级别的RBAC,即可在任意ns创建/删除应用(需要注意安全性), 示例:
-argocd cluster add kubernetes-admin@kubernetes
+# 注册集群以将应用程序部署到该集群(可选, 推荐)
+# 将 ServiceAccount （argocd-manager） 安装到该 kubectl 上下文的 kube-system 命名空间中，
+# 并将服务帐户绑定到管理员级别的 ClusterRole。Argo CD 使用此服务帐户令牌来执行其管理任务（即部署/监控）。
+CLUSTER=$(kubectl config get-contexts -o name)
+echo "$CLUSTER"
+argocd cluster add "$CLUSTER"
 
 # 创建项目
 argocd proj create frontend

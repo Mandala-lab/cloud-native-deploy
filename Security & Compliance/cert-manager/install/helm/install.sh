@@ -2,6 +2,9 @@
 # 启用 POSIX 模式并设置严格的错误处理机制
 set -o posix errexit -o pipefail
 
+mkdir -p /home/kubernetes/cert-manager
+cd /home/kubernetes/cert-manager
+
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
 

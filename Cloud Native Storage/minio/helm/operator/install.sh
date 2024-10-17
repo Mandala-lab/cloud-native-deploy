@@ -5,6 +5,9 @@ set -o posix errexit -o pipefail
 # 安装: https://github.com/minio/operator/tree/v6.0.4/helm/operator
 # 配置: https://min.io/docs/minio/kubernetes/upstream/operations/installation.html
 
+mkdir -pv /home/kubernetes/minio
+cd /home/kubernetes/minio
+
 # 添加仓库
 helm repo add minio https://operator.min.io/
 helm search repo minio/operator

@@ -2,13 +2,12 @@
 # 启用 POSIX 模式并设置严格的错误处理机制
 set -o posix errexit -o pipefail
 
-#!/usr/bin/env bash
-# 启用 POSIX 模式并设置严格的错误处理机制
-set -o posix errexit -o pipefail
+mkdir -p /home/kubernetes/redis
+cd /home/kubernetes/redis
 
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm pull bitnami/redis
-tar -zxvf redis-*.*.*.tgz
+tar -zxvf redis-*.tgz
 
 kubectl create secret \
 generic redis-password-secret \
@@ -24,6 +23,7 @@ generic redis-password-secret \
 # kubectl create secret generic certificates-tls-secret --from-file=./cert.pem --from-file=./cert.key --from-file=./ca.pem
 
 helm uninstall redis-ha -n redis-ha
+cp {values.yaml,.back}
 cat > values.yaml <<EOF
 auth:
   ## @param auth.enabled Enable password authentication
@@ -59,6 +59,8 @@ master:
     ports:
       redis: 6379
     type: LoadBalancer
+  persistence:
+    size: 8Gi
 
 replica:
   replicaCount: 3
@@ -66,11 +68,20 @@ replica:
     type: LoadBalancer
     ports:
       redis: 6379
+  resources
+    persistence:
+      size: 8Gi
+    requests:
+      cpu: 2
+      memory: 512Mi
+    limits:
+      cpu: 3
+      memory: 1024Mi
 EOF
 
 # --set password
 helm upgrade --install \
-redis-ha redis \
+redis-ha . \
 -f values.yaml \
 -n redis-ha \
 --create-namespace

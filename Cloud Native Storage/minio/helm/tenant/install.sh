@@ -2,6 +2,9 @@
 # 启用 POSIX 模式并设置严格的错误处理机制
 set -o posix errexit -o pipefail
 
+mkdir -pv /home/kubernetes/minio
+cd /home/kubernetes/minio
+
 # 安装: https://github.com/minio/operator/tree/v6.0.4/helm/operator
 # 配置: https://www.minio.org.cn/docs/minio/kubernetes/upstream/reference/operator-chart-values.html
 
@@ -10,12 +13,13 @@ helm pull minio/tenant
 tar -zxvf tenant-*.tgz
 cd tenant
 
-# 修改values.yaml, 推荐修改pools.servers与pools.size
+# 修改values.yaml, 推荐修改pools.servers与pools.size和configSecret
 # vi values.yaml
 
 # 全新安装
-helm install --namespace minio-tenant \
-  --create-namespace tenant . \
+helm install tenant . \
+  --create-namespace  \
+  --namespace minio-tenant \
   -f values.yaml
 
 # 更新安装

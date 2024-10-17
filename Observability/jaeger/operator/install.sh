@@ -24,8 +24,8 @@ spec:
     maxReplicas: 1
     resources:
       limits:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 200m
+        memory: 256Mi
 EOF
 
 kubectl apply -f jaeger.yml -n observability
