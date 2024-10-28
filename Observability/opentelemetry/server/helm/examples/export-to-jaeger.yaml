@@ -1,0 +1,57 @@
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: ${otel_collector_name}
+  namespace: ${otel_collector_namespace}
+spec:
+  config:
+    # 接收器
+    # 在启动otel-collector的服务器上所要接收的遥测数据
+    # 例如: otlp, kafka, opencensus, zipkin
+    receivers:
+      otlp:
+        protocols:
+          grpc: {}
+          #endpoint: ${receivers_otel_grpc_url}
+          http: {}
+          #endpoint: ${receivers_otel_http_url}
+    processors:
+      batch: {}
+    # 导出器
+    # 要导出到的后端服务URL地址, 注意要带schema协议
+    # 例如Jaeger, Prometheus, Loki
+    exporters:
+      # 监听http链路,发送到jaeger
+      otlp:
+        endpoint: ${export_otel_grpc_url}
+        tls:
+          # 是否使用不安全的连接, 即HTTP明文传输
+          insecure: true
+          # TLS证书:
+          #cert_file: cert.pem
+          #key_file: cert-key.pem
+      #otlphttp:
+      #  endpoint: ${export_otel_http_url}
+      #  tls:
+      #    # 是否使用不安全的连接, 即HTTP明文传输
+      #    insecure: true
+      #    # TLS证书:
+      #    #cert_file: cert.pem
+      #    #key_file: cert-key.pem
+      otlphttp:
+        endpoint: http://node10.api-r.com:30692/otlp
+
+    # 服务
+    # https://opentelemetry.io/zh/docs/collector/configuration/#service
+    # 该 service 部分用于根据接收器、处理器、导出器和扩展部分中的配置配置在收集器中启用的组件。
+    # 如果配置了组件(receivers,processors,exporters)，但未在 service 字段中声明，则不会启用该组件
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: []
+          exporters: [ otlp ]
+      logs:
+        receivers: [  ]
+        processors: [ ]
+        exporters: [ otlphttp ]

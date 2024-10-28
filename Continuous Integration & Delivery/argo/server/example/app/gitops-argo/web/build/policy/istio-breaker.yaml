@@ -1,0 +1,17 @@
+# 熔断和降级通常通过DestinationRule来配置
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: your-web-app-dr
+  namespace: microservice-shop
+spec:
+  host: your-web-app.service.local
+  trafficPolicy:
+    connectionPool:
+      http:
+        http2MaxRequests: 10
+        maxRequestsPerConnection: 10
+    outlierDetection:
+      consecutive5xxErrors: 2
+      interval: 5s
+      baseEjectionTime: 30

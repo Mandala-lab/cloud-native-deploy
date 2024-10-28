@@ -1,0 +1,9 @@
+deploy_to_k8s:
+  stage: deploy
+  image: argoproj/argocd:v2.0.5 # 使用Argo CD CLI镜像
+  script:
+    - argocd login $ARGOCD_SERVER --username $ARGOCD_USER --password $ARGOCD_PASSWORD
+    - argocd app set $WEB_APP_NAME --image $HARBOR_ADDRESS/$PROJECT_NAME/$WEB_APP_NAME:$CI_COMMIT_TAG
+    - argocd app sync $WEB_APP_NAME
+  only:
+    - tags

@@ -1,0 +1,50 @@
+apiVersion: apps/v1                # Kubernetes API版本
+kind: Deployment                   # 部署资源类型
+metadata:
+  name: kafka-ui-deployment         # Deployment的名称
+  namespace: kafka               # 命名空间
+  labels:
+    app: kafka-ui                   # 标签以标识此Deployment属于kafka-ui应用
+spec:
+  replicas: 1                       # 副本数为1
+  selector:
+    matchLabels:
+      app: kafka-ui                 # 选择与此标签匹配的Pod作为副本
+  template:
+    metadata:
+      labels:
+        app: kafka-ui               # 在Pod模板中设置与Deployment相同的标签
+    spec:
+      containers:
+        - name: kafka-ui               # 容器名称
+          image: provectuslabs/kafka-ui:latest  # 容器映像
+          env: # 数组格式 可设置多组
+            - name: KAFKA_CLUSTERS_0_NAME         # Kafka集群0的名称变量
+              value: "K8 Kafka Cluster"           # 注意：请自定义名称
+            - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS   #Kafka集群的服务器地址变量
+              value: my-cluster-kafka-brokers.kafka.svc.cluster.local:9092 #注意：需根据自身情况填写此Kafka访问地址
+          imagePullPolicy: Always        # 总是拉取最新的容器映像
+          resources:
+            requests:
+              memory: "256Mi"            # 容器请求的内存资源
+              cpu: "100m"                # 容器请求的CPU资源
+            limits:
+              memory: "1024Mi"           # 容器可使用的最大内存资源
+              cpu: "1000m"               # 容器可使用的最大CPU资源
+          ports:
+            - containerPort: 8080         # 容器暴露的端口
+---
+apiVersion: v1                      # Kubernetes API版本
+kind: Service                      # 服务资源类型
+metadata:
+  name: kafka-ui-service            # 服务的名称
+  namespace: kafka
+spec:
+  selector:
+    app: kafka-ui                   # 选择与此标签匹配的Pod作为服务的后端
+  type: NodePort                    # 服务类型为NodePort，允许从节点外部访问
+  ports:
+    - protocol: TCP                 # 端口协议为TCP
+      port: 8080                    # 服务监听的端口
+      targetPort: 8080              # 将流量转发到Pod的端口
+      nodePort: 31092               # 暴露给外部访问的端口

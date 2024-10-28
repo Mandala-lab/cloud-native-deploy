@@ -1,0 +1,17 @@
+# 此YAML文件定义了一个简单的安全策略，允许namespace中的所有服务相互通信。
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: microservice-shop # 只允许与当前的空间的微服务交互
+spec:
+  mtls:
+    mode: STRICT
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-all
+  namespace: microservice-shop
+spec:
+  { } # 允许所有请求

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice-shop2
+  namespace: microservice-shop2
+  labels:
+    app.kubernetes.io/name: microservice-shop2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: microservice-shop2
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: microservice-shop2
+    spec:
+      containers:
+        - name: microservice-shop2
+          image: ccr.ccs.tencentyun.com/mandala/microservice-shop:v1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4000
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: microservice-shop2

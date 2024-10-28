@@ -1,0 +1,6 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: higress-gateway
+spec:
+  controllerName: "higress.io/gateway-controller"

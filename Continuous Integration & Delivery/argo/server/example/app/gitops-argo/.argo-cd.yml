@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1  # 指定 Argo CD API 版本
+kind: Application  # 定义资源类型为 Application
+metadata: # 元数据部分
+  name: microservice-shop2  # 指定 Application 的名称
+  namespace: microservice-shop2 # 指定 Application 所属的命名空间
+  # # 定义资源的 finalizers
+  # https://argo-cd.readthedocs.io/en/stable/user-guide/app_deletion/#about-the-deletion-finalizer
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io  # 删除时行级联删除
+    #- resources-finalizer.argocd.argoproj.io/background  # 删除时后台行级联删除
+spec: # 规范部分
+  project: microservice-shop  # 应用程序将被配置的项目名称，这是在 Argo CD 中应用程序的一种组织方式
+  source: # 指定源
+    # Kubernetes 资源清单在仓库中的路径
+    path: build/ci
+    # 指定 Git 仓库的 URL
+    repoURL: http://192.168.2.158:7080/root/test.git
+    # targetRevision：想要使用的 git 分支
+    targetRevision: HEAD
+  # Kubernetes 集群中的目标
+  destination:
+    namespace: microservice-shop2  # 指定目标命名空间
+    server: https://kubernetes.default.svc  # 指定目标服务器
+  syncPolicy: # 指定同步策略
+    automated: # 自动化同步
+      prune: true  # 启用资源清理
+      selfHeal: true  # 启用自愈功能
+      allowEmpty: false  # 禁止空资源
+    syncOptions: # 同步选项
+      - Validate=false  # 禁用验证
+      - CreateNamespace=true  # 启用创建命名空间
+    retry: # 重试策略
+      limit: 5  # 重试次数上限
+      backoff: # 重试间隔
+        duration: 5s  # 初始重试间隔
+        factor: 2  # 重试间隔因子
+        maxDuration: 3m  # 最大重试间隔

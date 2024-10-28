@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice-shop-web
+  namespace: microservice-shop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: microservice-shop-web
+  template:
+    metadata:
+      labels:
+        app: microservice-shop-web
+    spec:
+      containers:
+        - name: microservice-shop-web
+          image: microservice-shop-web:v1
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10

@@ -1,0 +1,4 @@
+consul:
+  address: 192.168.0.158
+  schema: http
+  health_check: false

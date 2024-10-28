@@ -1,0 +1,32 @@
+# Source: https://argo-cd.readthedocs.io/en/stable/operator-manual/argocd-cm-yaml/
+
+apiVersion: argoproj.io/v1beta1
+kind: ArgoCD
+metadata:
+  name: example-argocd
+  labels:
+    example: basic
+spec:
+  extraConfig:
+    accounts.admin: "apiKey, login" #The same entry is reflected in Argo CD Configmap.
+    passwordPattern: "^.{6,32}$"
+    users.session.duration: "24d"
+    # exec.enabled indicates whether the UI exec feature is enabled. It is disabled by default.
+    exec.enabled: "true"
+    # Comma delimited list of additional custom remote values file schemes (http are https are allowed by default).
+    # Change to empty value if you want to disable remote values files altogether.
+    helm.valuesFileSchemes: http, https
+  server:
+    autoscale:
+      enabled: true
+    service:
+      type: LoadBalancer
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 125m
+        memory: 128Mi
+    route:
+      enabled: false

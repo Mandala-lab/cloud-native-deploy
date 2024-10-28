@@ -1,0 +1,74 @@
+//所有的脚本命令都放在pipeline中
+pipeline {
+    //指定任务在哪个集群节点中执行
+    agent any
+
+    //声明全局变量，方便后面使用
+    environment {
+        harborUser = 'admin'
+        harborPassword = 'Harbor12345'
+        harborAddress = '192.168.2.152:30003'
+        harborRepo = 'go'
+    }
+
+    stages {
+        stage('拉取代码') {
+            steps {
+                echo '开始拉取git仓库代码……'
+                checkout scmGit(branches: [[name: 'dev']], extensions: [], userRemoteConfigs: [[url: 'http://192.168.2.158:7080/root/test.git']])
+                echo '开始拉取git仓库代码完毕。'
+            }
+        }
+        stage('构建项目') {
+            steps {
+                echo '开始通过maven构建项目……'
+                sh 'node -v'
+                sh 'npm install pnpm -g'
+                sh 'ls'
+                sh 'cd ./web && pnpm install'
+                sh 'ls'
+                sh 'pnpm build'
+                echo '通过maven构建项目完毕'
+            }
+        }
+        stage('代码检查') {
+            steps {
+                echo 'TODO 通过SonarQube做代码质量检测'
+            }
+        }
+        stage('制作镜像') {
+            steps {
+                echo '通过Docker制作自定义镜像……'
+                sh '''mv ./target/*.jar ./docker/
+                docker build -t ${JOB_NAME}:dev ./docker/'''
+                echo '通过Docker制作自定义镜像完毕'
+            }
+        }
+        stage('推送镜像') {
+            steps {
+                echo '将自定义对象推送到Harbor仓库……'
+                sh '''docker login -u ${harborUser} -p ${harborPassword} ${harborAddress}
+                docker tag ${JOB_NAME}:dev ${harborAddress}/${harborRepo}/${JOB_NAME}:dev
+                docker push ${harborAddress}/${harborRepo}/${JOB_NAME}:dev
+                docker image prune -f'''
+                echo '将自定义对象推送到Harbor仓库完成'
+            }
+        }
+        stage('将yml文件传到k8smaster') {
+            steps {
+                echo '将yml文件传到k8smaster……'
+                sshPublisher(publishers: [sshPublisherDesc(configName: 'k8smaster', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'pipeline-auto.yml')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                echo '将yml文件传到k8smaster完毕'
+            }
+        }
+        stage('远程执行k8smaster的kubectl命令') {
+            steps {
+                echo '远程执行k8smaster的kubectl命令……'
+                sshPublisher(publishers: [sshPublisherDesc(configName: 'k8smaster', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''kubectl apply -f /usr/local/k8s/pipeline-auto.yml
+                //强制重新部署容器
+                kubectl rollout restart deployment pipeline-auto -n test''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                echo '远程执行k8smaster的kubectl命令完毕'
+            }
+        }
+    }
+}

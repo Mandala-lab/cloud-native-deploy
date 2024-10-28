@@ -1,0 +1,90 @@
+# Source: https://docs.gitlab.com/ee/ci/yaml/index.html
+
+stages:
+  - build
+  - go_push
+  - web_build
+
+variables:
+  PROJECT_NAME_SERVER: microservice-shop
+  PROJECT_NAME_CLIENT: microservice-shop-web
+  RUNNER_WEB_TAG: "node" # 给特定的tag的runner执行
+  RUNNER_GO_TAG: "did" # 给特定的tag的runner执行
+  RUNNER_HARBOR_TAG: "did2" # 给特定的tag的runner执行
+  RUNNER_SHELL_TAG: "shell" # 给特定的tag的runner执行
+  IMAGE_TAG: "v1.0.0" # 版本号
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375
+
+# 定义前端构建作业
+frontend_build:
+  stage: build
+  image: node:18-alpine3.19
+  tags:
+    - ${RUNNER_WEB_TAG}
+  script:
+    - echo "安装pnpm包管理器"
+    - node -v
+    - npm install pnpm -g
+    - cd ./web && pnpm install
+    - pnpm build
+  only:
+    - main
+  artifacts:
+    paths:
+      - web/dist/
+
+cache:
+  key: ${WEB_PROJECT_NAME}
+  paths:
+    - node_modules
+    - dist
+
+# 定义后端构建作业
+backend_build:
+  stage: build
+  image: golang:1.18  # 使用Go环境
+  script:
+    - echo "构建Golang项目"
+    - go build ./...
+  artifacts:
+    paths:
+      - go_binary/  # 假设构建的二进制文件在此目录
+  only:
+    - main
+
+# 构建镜像
+dockerize:
+  stage: build
+  tags:
+    - ${RUNNER_HARBOR_TAG}
+  image: docker:24.0.5 # 指定为宿主机的Docker镜像版本，但实际上不会下载
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - docker info # 验证 Docker 是否正常工作
+    - docker version
+  script:
+    # - mkdir -p /etc/docker/certs.d/192.168.2.152:30003
+    # - mv /ca.crt /etc/docker/certs.d/192.168.2.152:30003
+    - docker login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD $HARBOR_ADDRESS
+    - docker build -t $IMAGE_TAG -f Dockerfile .
+    - docker tag $IMAGE_TAG $HARBOR_ADDRESS/$HARBOR_REPO/$PROJECT_NAME_SERVER:$IMAGE_TAG
+    - docker push $HARBOR_ADDRESS/$HARBOR_REPO/$PROJECT_NAME_SERVER:$IMAGE_TAG
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  tags:
+    - ${RUNNER_HARBOR_TAG}
+  script:
+    #    - sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+    - sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+    #    - apk update
+    - apk add sshpass
+    - apk add openssh-client
+    - export SSHPASS=root
+    - sshpass -e scp -o stricthostkeychecking=no ./argo.sh root@192.168.2.160:/home/kubernetes/microservice-shop
+    - sshpass -e ssh -o stricthostkeychecking=no root@192.168.2.160 'sh /home/kubernetes/microservice-shop/argo.sh'

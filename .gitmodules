@@ -1,0 +1,21 @@
+[submodule "open-telemetry/client/opentelemetry"]
+	path = open-telemetry/client/opentelemetry
+	url = git@github.com:lisa-sum/opentelemetry.git
+[submodule "open-telemetry/go-client"]
+	path = open-telemetry/go-client
+	url = git@github.com:lisa-sum/opentelemetry.git
+[submodule "consul/client/kratos/examples/register2"]
+	path = consul/client/kratos/examples/register2
+	url = git@github.com:lisa-sum/kratos-consul.git
+[submodule "argo/example/gitops-argo"]
+	path = argo/example/gitops-argo
+	url = git@github.com:lisa-sum/gitops-argo.git
+[submodule "kafka/helm/confluent-kafka-go"]
+	path = kafka/helm/confluent-kafka-go
+	url = https://github.com/sunmery/confluent-kafka-go.git
+[submodule "kafka/helm/strimzi-kafka"]
+	path = kafka/helm/strimzi-kafka
+	url = git@github.com:sunmery/strimzi-kafka.git
+[submodule "kafka/helm/--force"]
+	path = kafka/helm/--force
+	url = git@github.com:sunmery/strimzi-kafka.git

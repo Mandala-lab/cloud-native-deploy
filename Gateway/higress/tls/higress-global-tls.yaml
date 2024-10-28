@@ -1,0 +1,23 @@
+# 参数: https://higress.cn/docs/latest/user/configmap/
+# 全局TLS配置
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: higress-https
+  namespace: higress-system
+data:
+  cert: |
+    automaticHttps: true
+    # 证书过期前多少天自动Renew， 最大值为90天
+    renewBeforeDays: 30
+    fallbackForInvalidSecret: true
+    acmeIssuer:
+    - name: letsencrypt
+      email: xicons@qq.com
+    credentialConfig:
+    # - tlsIssuer: letsencrypt
+      domains:
+      - svc.api-r.com
+      - web.api-r.com
+      - swagger.api-r.com
+      tlsSecret: api-r-com-secret

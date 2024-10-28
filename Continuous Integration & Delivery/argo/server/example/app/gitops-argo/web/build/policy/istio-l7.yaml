@@ -1,0 +1,17 @@
+# 定义一个基于HTTP的路由规则，将流量导向特定版本的服务。
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: web-app
+  namespace: microservice-shop
+spec:
+  hosts:
+    - "your-web-app.service.local"
+  http:
+    - match:
+        - uri:
+            prefix: "/v1"
+      route:
+        - destination:
+            host: your-web-app.service.local
+            subset: v1
