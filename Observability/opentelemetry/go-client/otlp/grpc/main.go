@@ -20,7 +20,7 @@ func initTracer() func(context.Context) error {
 		otlptracegrpc.NewClient(
 			otlptracegrpc.WithInsecure(),
 			// otlptracegrpc.WithEndpoint("45.207.192.132:30527"), // 修改为你的 OTEL Collector 地址和端口
-			otlptracegrpc.WithEndpoint("node10.api-r.com:30434"), // 修改为你的 OTEL Collector 地址和端口
+			otlptracegrpc.WithEndpoint("node10.api-r.com:31561"), // 修改为你的 OTEL Collector 地址和端口
 		),
 	)
 	if err != nil {
@@ -30,7 +30,7 @@ func initTracer() func(context.Context) error {
 	// 创建资源
 	resource := resource.NewWithAttributes(
 		semconv.SchemaURL,
-		semconv.ServiceNameKey.String("my-service3"),
+		semconv.ServiceNameKey.String("my-service5"),
 	)
 
 	// 创建 TracerProvider

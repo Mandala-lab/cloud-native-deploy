@@ -17,7 +17,5 @@ data:
     credentialConfig:
     # - tlsIssuer: letsencrypt
       domains:
-      - svc.api-r.com
-      - web.api-r.com
-      - swagger.api-r.com
+      - *.api-r.com
       tlsSecret: api-r-com-secret

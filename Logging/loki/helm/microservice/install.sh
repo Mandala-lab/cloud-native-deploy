@@ -101,13 +101,12 @@ EOF
 # 用于测试: https://github.com/grafana/loki/blob/main/cmd/loki/loki-local-config.yaml
 #wget https://github.com/grafana/loki/raw/main/cmd/loki/loki-local-config.yaml
 
-# 卸载
-# helm uninstall loki -n loki
-helm upgrade --install loki loki \
---namespace=loki \
---create-namespace \
--f loki/values.yaml \
--f minio-values.yaml
+# 关闭验证, 仅适合开发使用
+# https://grafana.com/docs/loki/latest/operations/authentication/
+cat > disable-auth.yml <<EOF
+loki:
+  auth_enabled: false
+EOF
 
 # otel转发到loki
 #values.yaml
@@ -116,3 +115,12 @@ loki
   limits_config:
     allow_structured_metadata: true
 EOF
+
+# 卸载
+# helm uninstall loki -n loki
+helm upgrade --install loki loki \
+--namespace=loki \
+--create-namespace \
+-f loki/values.yaml \
+-f minio-values.yaml \
+-f disable-auth.yml
