@@ -1,3 +1,0 @@
-consul:
-  address: 192.168.2.181:8500
-  schema: http

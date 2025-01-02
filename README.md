@@ -22,21 +22,16 @@
 
 ### Continuous Integration & Delivery
 
-1. Argo(毕业), 符合云原生
-2. flux(毕业), 也许会学习
+1. Argo
+2. flux
 3. Gitlab CI Runner
 4. GitHub Actions
-5. Jenkins(Java系笨重历史项目且复杂难配)
-6. Tekton, 观望, 有部分人用
-7. Tekton, 字节开源产品, 包含对数据库的监控, 持观望态度, 偏业务的KPI产品
 
 ### Database
 
 1. MongoDB
 2. Redis
 3. Postgres
-4. TiKV(毕业),计划添加
-5. TiDB(配套),计划添加
 
 ### Streaming & Messaging
 
@@ -57,10 +52,7 @@
 
 ### API Gateway
 
-1. Higress(待学习清单), 流量与业务网关
-2. Emissary-Ingress(想了解), CNCF孵化
-3. Traefik(想了解), 基于NGINX
-3. Kong(想了解), 基于NGINX
+1. Higress
 
 ### Service Proxy
 
@@ -75,7 +67,7 @@
 
 ### Service Mesh
 
-1. Istio(待学习清单)
+1. Istio
 2. Consul
 
 ### Coordination & Service Discovery
@@ -94,7 +86,7 @@
 ### Cloud Native Network
 
 1. flannel
-2. cilium(研究两周无果, 暂时放弃)
+2. cilium
 3. CNI
 
 ### Container Runtime
@@ -111,8 +103,8 @@
 
 ### Automation & Configuration
 
-1. Terraform(学习计划)
-2. Ansible(学习计划)
+1. Terraform
+2. Ansible
 
 ## 软件工程
 

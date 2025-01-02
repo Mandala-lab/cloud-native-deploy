@@ -1,0 +1,151 @@
+# source: https://github.com/casdoor/casdoor-helm/blob/master/charts/casdoor/values.yaml
+
+# Default values for casdoor.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+image:
+  repository: casbin
+  name: casdoor
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# ref: https://casdoor.org/docs/basic/server-installation#via-ini-file
+config: |
+  appname = casdoor
+  httpport = {{ .Values.service.port }}
+  runmode = dev
+  SessionOn = true
+  copyrequestbody = true
+  driverName = {{ .Values.database.driver }}
+  dataSourceName = {{ include "casdoor.dataSourceName" . }}
+  dbName = {{ include "casdoor.dbName" . }}
+  redisEndpoint =
+  defaultStorageProvider =
+  isCloudIntranet = false
+  authState = "casdoor"
+  socks5Proxy = ""
+  verificationCodeTimeout = 10
+  initScore = 0
+  logPostOnly = true
+  origin =
+  enableGzip = true
+
+database:
+  # Supports mysql, postgres, cockroachdb, sqlite3
+  driver: sqlite3
+
+  user: ""
+  password: ""
+  host: ""
+  # If port is empty, default port will be used.
+  # mysql: 3306, postgres: 5432, cockroachdb: 26257
+  port: ""
+  databaseName: casdoor
+
+  sslMode: disable
+
+imagePullSecrets: [ ]
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: { }
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: { }
+
+podSecurityContext: { }
+# fsGroup: 2000
+
+securityContext: { }
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
+
+probe:
+  readiness:
+    enabled: true
+  liveness:
+    enabled: true
+
+service:
+  type: NodePort
+  port: 8000
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: { }
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: [ ]
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 300m
+  #   memory: 328Mi
+  requests:
+    cpu: 300m
+    memory: 328Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: { }
+
+tolerations: [ ]
+
+affinity: { }
+
+# -- Optionally add extra sidecar containers.
+extraContainersEnabled: false
+extraContainers: ""
+# extraContainers: |
+#  - name: ...
+#    image: ...
+extraVolumeMounts: [ ]
+extraVolumes: [ ]
+
+envFromSecret: [ ]
+  # - name: ENV_NAME
+#   secretName: test-secret
+#   key: key_name
+
+envFromConfigmap: [ ]
+  # - name: ENV_NAME
+#   configmapName: test-cm
+#   key: key_name
+
+envFrom: [ ]
+  # - type: configmap
+  #   name: test-cm
+# - type: secret
+#   name: test-secret
