@@ -3,7 +3,10 @@
 set -o posix errexit -o pipefail
 
 # https://github.com/argoproj/argo-helm/tree/main
-#
+
+mkdir -pv /home/kubernetes/argocd
+cd /home/kubernetes/argocd
+
 helm repo add argo https://argoproj.github.io/argo-helm
 helm upgrade \
 --install argo \

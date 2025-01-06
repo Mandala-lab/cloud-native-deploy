@@ -3,7 +3,12 @@ set -x
 
 # https://casdoor.org/zh/docs/basic/try-with-helm/
 # 镜像版本tag: https://hub.docker.com/r/casbin/casdoor-helm-charts/tags
-helm pull oci://registry-1.docker.io/casbin/casdoor-helm-charts --version v1.702.0
+
+mkdir -p /home/kubernetes/casdoor
+cd /home/kubernetes/casdoor
+
+#helm pull oci://registry-1.docker.io/casbin/casdoor-helm-charts --version v1.702.0
+helm pull oci://registry-1.docker.io/casbin/casdoor-helm-charts --version v1.785.0
 tar -zxvf casdoor-helm-charts-*.tgz
 cd casdoor-helm-charts || exit
 kubectl create ns casdoor

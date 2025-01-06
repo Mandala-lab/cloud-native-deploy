@@ -4,11 +4,12 @@ set -o posix errexit -o pipefail
 
 # 获取初始化的密码, 用户名是admin
 argocd admin initial-password -n argocd
+
 argocd login \
-https://node6.example.com:32049 \
---username admin \
---password msdnmmi,. \
---insecure
+  node10.apikv.com:30789 \
+  --username admin \
+  --password <password> \
+  --insecure
 
 # 注册集群以将应用程序部署到该集群(可选, 推荐)
 # 将 ServiceAccount （argocd-manager） 安装到该 kubectl 上下文的 kube-system 命名空间中，

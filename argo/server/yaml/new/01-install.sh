@@ -9,7 +9,9 @@ kubectl create namespace argocd
 
 # 入门: https://argo-cd.readthedocs.io/en/stable/getting_started/
 # argo crd清单: https://github.com/argoproj/argo-cd/tree/master/manifests
-kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds\?ref\=stable"
+#kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds\?ref\=stable"
+#kubectl apply -k "https://mirror.ghproxy.com/https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
+#kubectl apply -k "https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
 
 # argo cd 非高可用清单: https://github.com/argoproj/argo-cd/tree/master/manifests
 wget https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
