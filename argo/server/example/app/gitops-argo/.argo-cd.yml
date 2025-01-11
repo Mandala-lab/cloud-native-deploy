@@ -1,38 +1,58 @@
 apiVersion: argoproj.io/v1alpha1 # 指定 Argo CD API 版本
 kind: Application # 定义资源类型为 Application
 metadata: # 元数据部分
-  name: e-commence # 指定 Application 的名称
+  name: e-commence-user # 指定 Application 的名称
   namespace: argocd # argocd所在的命名空间
   # # 定义资源的 finalizers
   # https://argo-cd.readthedocs.io/en/stable/user-guide/app_deletion/#about-the-deletion-finalizer
   finalizers:
-    # - resources-finalizer.argocd.argoproj.io # 删除时行级联删除
     - resources-finalizer.argocd.argoproj.io/background  # 删除时后台行级联删除
-spec: # 规范部分
-  project: tiktok-e-commence # 应用程序将被配置的项目名称，这是在 Argo CD 中应用程序的一种组织方式
-  source: # 指定源
-    # Kubernetes 资源清单在仓库中的路径
-    path: user/manifests/application/overlays/production
-    # 从 Helm 存储库创建应用程序时，必须指定 chart 属性，而不是 spec.source 中的 path 属性
-    # chart: argo
-    # 指定 Git 仓库的 URL
+    # - resources-finalizer.argocd.argoproj.io # 删除时行级联删除
+  labels:
+    name: e-commence-user
+spec:
+  # 应用程序所属的项目。
+  project: tiktok-e-commence
+  source:
+    # Git仓库的URL
     repoURL: https://github.com/sunmery/tiktok_e-commence.git
-    # targetRevision：想要使用的 git 分支
+    # 部署清单文件路径. 相对路径, 基于git仓库根目录的路径. kustomize的overlays目录或kubernetes清单文件路径
+    path: user/manifests/kustomize/overlays/production
+    # 使用的 git 分支
     targetRevision: pre
-  # Kubernetes 集群中的目标
   destination:
-    namespace: tiktok # 指定目标命名空间
-    server: https://10.0.1.3:6443 # 指定目标服务器
-  syncPolicy: # 指定同步策略
-    automated: # 自动化同步
-      prune: true # 启用资源清理
-      selfHeal: true # 启用自愈功能
-      allowEmpty: false # 禁止空资源
-    syncOptions: # 同步选项
-      - Validate=true # 禁用验证
-    retry: # 重试策略
-      limit: 5 # 重试次数上限
-      backoff: # 重试间隔
-        duration: 5s # 初始重试间隔
-        factor: 2 # 重试间隔
-        maxDuration: 3m # 最大重试间隔
+    # The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace
+    namespace: tiktok
+    # Kubernetes集群URL
+    # server: https://kubernetes.default.svc
+    # 集群名称
+    name: in-cluster
+  # 指定同步策略
+  syncPolicy:
+    # 自动同步
+    automated:
+      # 是否在同步后进行修剪
+      prune: false
+      # 是否启用自愈功能, 强制以GitRepo状态为准，手动在环境修改不会生效
+      selfHeal: true
+      # 禁止空资源
+      allowEmpty: false
+    # 同步选项
+    syncOptions:
+      - CreateNamespace=false # 是否让argocd创建namespace
+      - Validate=true # 是否启用Kubectl验证
+      - RespectIgnoreDifferences=true # 支持忽略差异配置(ignoreDifferences:)
+      - ApplyOutOfSyncOnly=true # 是否仅同步不同步的资源，而不是应用 Application 中的每个对象。
+      - PrunePropagationPolicy=background #级联删除策略(background, foreground and orphan.)ApplyOutOfSyncOnly=true：仅同步不同步状态的资源。避免大量对象时资源API消耗
+    # 重试策略
+    retry:
+      # 重试次数上限
+      limit: 5
+      # 重试间隔
+      backoff:
+        # 初始重试间隔
+        duration: 5s
+        # 重试间隔
+        factor: 2
+        # 最大重试间隔
+        maxDuration: 3m

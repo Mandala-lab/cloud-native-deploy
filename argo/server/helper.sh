@@ -37,7 +37,7 @@ argocd app create e-commence \
 --repo https://github.com/sunmery/tiktok_e-commence.git \
 --revision pre \
 --path user/manifests/application/overlays/production \
---dest-server https://10.0.1.3:6443 \
+--dest-name in-cluster \
 --dest-namespace tiktok \
 --validate
 
