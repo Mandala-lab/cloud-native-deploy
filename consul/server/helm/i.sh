@@ -16,4 +16,5 @@ cd consul/
 helm install consul . \
   --create-namespace \
   -f values.yaml \
+  -f consul.values.yaml \
   --namespace consul

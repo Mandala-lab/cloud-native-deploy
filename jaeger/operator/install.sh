@@ -17,7 +17,7 @@ cat > jaeger.yml <<EOF
 apiVersion: jaegertracing.io/v1
 kind: Jaeger
 metadata:
-  name: simple-prod
+  name: jaeger
 spec:
   strategy: production
   collector:
@@ -31,4 +31,4 @@ EOF
 kubectl apply -f jaeger.yml -n observability
 
 # 启用UI的NodePort类型的转发
-kubectl patch svc simple-prod-query -n observability -p '{"spec":{"type":"NodePort"}}'
+kubectl patch svc jaeger-query -n observability -p '{"spec":{"type":"NodePort"}}'

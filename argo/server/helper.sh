@@ -1,4 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
+# 启用 POSIX 模式并设置严格的错误处理机制
+set -o posix errexit -o pipefail
 
 argocd proj create tiktok-e-commence
 
@@ -19,14 +21,21 @@ argocd proj add-destination tiktok-e-commence https://kubernetes.default.svc def
 #argocd proj deny-cluster-resource <PROJECT> <GROUP> <KIND>
 #argocd proj deny-namespace-resource <PROJECT> <GROUP> <KIND>
 
-# test
-argocd app delete e-commence || true
-
-# revision 分支名称
+# argocd app delete e-commence
 argocd app create e-commence \
 --project tiktok-e-commence \
---repo https://example.git \
---revision main \
+--repo https://github.com/sunmery/test-argocd.git \
+--path deployment/user \
+--dest-server https://10.0.1.3:6443 \
+--dest-namespace tiktok \
+--validate
+
+# test
+argocd app delete e-commence || true
+argocd app create e-commence \
+--project tiktok-e-commence \
+--repo https://github.com/sunmery/tiktok_e-commence.git \
+--revision pre \
 --path user/manifests/application/overlays/production \
 --dest-server https://10.0.1.3:6443 \
 --dest-namespace tiktok \

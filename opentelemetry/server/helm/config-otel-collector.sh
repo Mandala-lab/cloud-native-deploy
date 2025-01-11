@@ -11,8 +11,8 @@ receivers_otel_grpc_url="0.0.0.0:4317"
 receivers_otel_http_url="0.0.0.0:4318"
 #export_otel_http_url="http://node9.api-r.com:30253"
 #export_otel_grpc_url="http://node9.api-r.com:32299"
-export_otel_grpc_url="simple-prod-collector.${otel_collector_namespace}.svc.cluster.local:4317"
-export_otel_http_url="simple-prod-collector.${otel_collector_namespace}.svc.cluster.local:4318"
+export_otel_grpc_url="jaeger-collector.${otel_collector_namespace}.svc.cluster.local:4317"
+export_otel_http_url="jaeger-collector.${otel_collector_namespace}.svc.cluster.local:4318"
 
 cat > opentelemetry-collector.yaml <<EOF
 apiVersion: opentelemetry.io/v1beta1

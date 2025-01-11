@@ -12,4 +12,9 @@ wget https://raw.githubusercontent.com/dragonflydb/dragonfly-operator/main/manif
 kubectl apply -f dragonfly-operator.yaml
 
 wget https://raw.githubusercontent.com/dragonflydb/dragonfly-operator/main/config/samples/v1alpha1_dragonfly.yaml
-kubectl apply -f v1alpha1_dragonfly.yaml
+kubectl create ns dragonfly
+kubectl apply -f v1alpha1_dragonfly.yaml -n dragonfly
+
+kubectl get po,svc -n dragonfly -owide
+kubectl patch svc dragonfly-sample -n dragonfly -p '{"spec":{"type":"NodePort"}}'
+kubectl get po,svc -n dragonfly -owide

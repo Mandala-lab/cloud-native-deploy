@@ -75,7 +75,7 @@ helm upgrade higress higress.io/higress \
 mkdir -p /home/kubernetes/gateway-api
 cd /home/kubernetes/gateway-api
 
-wget https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0-rc1/experimental-install.yaml
+wget https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.1/experimental-install.yaml
 kubectl apply -f experimental-install.yaml
 
 # 更新参数
@@ -139,6 +139,9 @@ spec:
 EOF
 
 # 测试连通
+k apply -f test-echo.yml
+k apply -f test-gateway.yml
+
 
 curl http://GatewayIP:PROT/foo -H 'host: foo.bar.com'
 

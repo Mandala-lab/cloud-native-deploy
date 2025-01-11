@@ -4,8 +4,6 @@ set -o posix errexit -o pipefail
 
 vi /etc/haproxy/haproxy.cfg
 
-systemctl restart haproxy
-
 cat > /etc/haproxy/haproxy.cfg <<EOF
 global
 	log /dev/log	local0
@@ -64,3 +62,5 @@ backend minio_http_backend
     mode http
     server minio_http localhost:30652 check
 EOF
+
+systemctl restart haproxy

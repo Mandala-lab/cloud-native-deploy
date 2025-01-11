@@ -10,11 +10,15 @@ cd /home/kubernetes/argocd
 # --insecure: 忽略TLS验证
 # --grpc-web
 #lb_ip=$(kubectl get service example-argocd-server -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' -n $ns)
+
+# 获取初始化的密码
+argocd admin initial-password -n argocd
+
 lb_ip="argocd.example.com:31258"
 argocd login \
 $lb_ip \
 --username admin \
---password $pwd \
+--password <password> \
 --insecure
 
 # 修改密码
@@ -68,12 +72,12 @@ EOF
 
 # 创建APP
 argocd app create frontend \
---project frontend \
---repo https://gitlab.com/lookeke/full-stack-engineering.git \
---path frontend/ci \
---dest-server https://kubernetes.default.svc \
---dest-namespace frontend \
---validate
+  --project frontend \
+  --repo https://gitlab.com/lookeke/full-stack-engineering.git \
+  --path frontend/ci \
+  --dest-server https://kubernetes.default.svc \
+  --dest-namespace frontend \
+  --validate
 
 # 删除
 #argocd app delete guestbook
