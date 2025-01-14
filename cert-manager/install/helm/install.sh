@@ -13,15 +13,19 @@ helm repo update
 helm show values jetstack/cert-manager > values.yaml
 
 #修改 values.yaml
-
+cat > cert-manager-values.yaml <<EOF
 # installCRDs: true
 # prometheus:
 #   enabled: false
 # webhook:
 #   timeoutSeconds: 10
+EOF
 
 # 安装
-helm install cert-manager jetstack/cert-manager -n cert-manager --create-namespace -f values.yaml
+helm install cert-manager jetstack/cert-manager \
+  -n cert-manager \
+  --create-namespace \
+  -f cert-manager-values.yaml
 
 # 等待完成
 kubectl wait --for=condition=Ready pods --all -n cert-manager

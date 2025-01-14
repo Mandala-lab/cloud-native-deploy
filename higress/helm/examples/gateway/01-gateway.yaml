@@ -6,11 +6,10 @@ metadata:
 spec:
   gatewayClassName: higress-gateway
   listeners:
-    - name: default-tcp
-      protocol: TCP
-      port: 9000
+    - name: default
+      hostname: "*.apikv.com.com" # 你的域名
+      port: 80
+      protocol: HTTP
       allowedRoutes:
         namespaces:
           from: All
-        kinds:
-          - kind: TCPRoute

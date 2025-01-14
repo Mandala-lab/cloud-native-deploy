@@ -42,7 +42,7 @@ ui:
 server:
   enable: true
   affinity: "" # 允许每个节点上运行更多的Pod
-  storage: '10Gi' # 定义用于配置服务器的 StatefulSet 存储的磁盘大小
+  storage: '3Gi' # 定义用于配置服务器的 StatefulSet 存储的磁盘大小
   #storageClass: "local-path" # 使用Kubernetes集群的默认 StorageClass 用于服务器的 StatefulSet 存储的 StorageClass。如果要自动创建存储，则必须能够动态预配它。例如，要使用 local（ https://kubernetes.io/docs/concepts/storage/storage-classes/#local） 存储类，需要手动创建 PersistentVolumeClaims。值 null 将使用 Kubernetes 集群的默认 StorageClass。如果默认 StorageClass 不存在，则需要创建一个。请参阅服务器性能要求文档的读/写调整部分，了解有关选择高性能存储类的注意事项
   exposeService:
     enabled: true

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: foo
+spec:
+  ingressClassName: higress
+  rules:
+    - host: foo.bar.com
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/foo"
+            backend:
+              service:
+                name: foo-service
+                port:
+                  number: 5678

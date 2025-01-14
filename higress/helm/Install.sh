@@ -8,16 +8,31 @@ cd /home/kubernetes/higress
 helm repo add higress.io https://higress.io/helm-charts
 
 # 没有LB的情况, 需要添加higress-core.gateway.hostNetwork，让 Higress 监听本机端口，再通过其他软/硬负载均衡器转发给固定机器 IP:
+
+helm uninstall higress -n higress-system || true
+cat > values.yaml <<EOF
+higress-core:
+  gateway:
+    resources:
+      limits:
+        memory: 2048Mi
+      requests:
+        memory: 2048Mi
+    replicas: 1
+    hostNetwork: true
+    service:
+      type: NodePort
+    httpPort: 80
+    httpsPort: 443
+    nodeSelector:
+      kubernetes.io/hostname: node10
+EOF
 helm install higress higress.io/higress \
   -n higress-system \
   --create-namespace \
   --render-subchart-notes \
   --set higress-console.service.type=NodePort \
-  --set higress-core.controller.resources.requests.cpu=500m \
-  --set higress-core.controller.resources.requests.memory=1Gi \
-  --set higress-core.gateway.replicas=1 \
-  --set higress-core.controller.replicas=1 \
-  --set higress-core.gateway.hostNetwork=true
+  -f values.yaml
 
 # remove
 #helm uninstall higress -n higress-system
@@ -64,8 +79,8 @@ helm install istio-base istio/base \
 # 更新
 helm upgrade higress higress.io/higress \
   -n higress-system \
-  --set global.enableIstioAPI=true \
-  --reuse-values
+  --reuse-values \
+  --set global.enableIstioAPI=true
 
 # Gateway API CRD（可选）
 # 集群里需要提前安装好 Gateway API 的 CRD：https://github.com/kubernetes-sigs/gateway-api/releases

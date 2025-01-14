@@ -2,51 +2,19 @@
 # 启用 POSIX 模式并设置严格的错误处理机制
 set -o posix errexit -o pipefail
 
-cat > gatewayclass.yaml <<EOF
-apiVersion: gateway.networking.k8s.io/v1
-kind: GatewayClass
-metadata:
-  name: higress-gateway
-spec:
-  controllerName: "higress.io/gateway-controller"
-EOF
-kubectl apply -f gatewayclass.yaml
+# 需要先安装gateway api
+# kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.1/experimental-install.yaml
+# 这种模式下，需要更新 Higress 的部署参数：
+# helm upgrade higress -n higress-system --set global.enableGatewayAPI=true higress.io/higress --reuse-values
 
+# 第一次需要应用. 后续不需要
+kubectl apply -f 00-gateway-class.yaml
+kubectl apply -f 01-gateway.yaml
 
-cat > gateway.yaml <<EOF
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: higress-gateway
-  namespace: higress-system
-spec:
-  gatewayClassName: higress-gateway
-  listeners:
-  - name: default-tcp
-    protocol: TCP
-    port: 9000
-    allowedRoutes:
-      namespaces:
-        from: All
-      kinds:
-      - kind: TCPRoute
-EOF
-kubectl apply -f gateway.yaml
+# 测试的应用
+kubectl apply -f 02-test-demo.yaml
+# 测试Gateway功能
+kubectl apply -f 03-http-route.yaml
 
-cat > tcproute.yaml <<EOF
-apiVersion: gateway.networking.k8s.io/v1alpha2
-kind: TCPRoute
-metadata:
-  name: tcp-echo
-  namespace: default
-spec:
-  parentRefs:
-  - name: higress-gateway
-    namespace: higress-system
-    port: 9000
-  rules:
-  - backendRefs:
-    - name: tcp-echo
-      port: 9000
-EOF
-kubectl apply -f tcproute.yaml
+# 访问, gateway.apikv.com 是你的网关域名, 需要加 /foo 来访问测试的Pod的路径才回有输出
+curl http://gateway.apikv.com/foo -H 'host: foo.bar.com'

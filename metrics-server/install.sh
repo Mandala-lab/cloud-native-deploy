@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 
-kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+mkdir -p  /home/kubernetes/metrics-server
+cd  /home/kubernetes/metrics-server || eixt
+
+wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl apply -f components.yaml
+kubectl -n kube-system edit deployment metrics-server
+# 在args数组末尾添加跳过tls认证的参数
+# args:
+#  - --kubelet-insecure-tls
+#
 
 #cat > kubectl-top.sh <<EOF
 #apiVersion: v1
