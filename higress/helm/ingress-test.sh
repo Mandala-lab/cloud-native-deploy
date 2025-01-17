@@ -50,13 +50,12 @@ spec:
               number: 5678
 EOF
 
+kubectl apply -f test-echo.yml
+kubectl apply -f test-gateway.yml
 
-k apply -f test-echo.yml
-k apply -f test-gateway.yml
-
-k get ingress
-k get po -l app=foo
-k get service/foo-service
+kubectl get ingress
+kubectl get po -l app=foo
+kubectl get service/foo-service
 # 测试连通
 # 将foo-service的IP临时写到/etc/hosts中
 echo "<foo-service-IP> foo.bar.com" | tee -a /etc/hosts
