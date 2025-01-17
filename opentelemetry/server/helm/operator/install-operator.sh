@@ -10,6 +10,7 @@ cd /home/kubernetes/opentelemetry || exit
 
 # opentelemetry-operator
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo update
 
 helm pull open-telemetry/opentelemetry-operator --untar
 cd opentelemetry-operator/
