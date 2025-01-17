@@ -33,7 +33,7 @@ ui:
       https: 31443
   # Enables displaying metrics in the Consul UI.
   metrics:
-    enabled: true
+    enabled: false
     # The metrics provider specification.
     provider: "prometheus"
     # The URL of the prometheus metrics server.
@@ -46,13 +46,13 @@ server:
   #storageClass: "local-path" # 使用Kubernetes集群的默认 StorageClass 用于服务器的 StatefulSet 存储的 StorageClass。如果要自动创建存储，则必须能够动态预配它。例如，要使用 local（ https://kubernetes.io/docs/concepts/storage/storage-classes/#local） 存储类，需要手动创建 PersistentVolumeClaims。值 null 将使用 Kubernetes 集群的默认 StorageClass。如果默认 StorageClass 不存在，则需要创建一个。请参阅服务器性能要求文档的读/写调整部分，了解有关选择高性能存储类的注意事项
   exposeService:
     enabled: true
-    #    type: LoadBalancer
-    type: NodePort #参考https://developer.hashicorp.com/consul/docs/k8s/helm#v-server-exposeservice-nodeport
-    nodePort:
-      http:
-        32080
-      https:
-        32443
+    type: LoadBalancer
+    # type: NodePort #参考https://developer.hashicorp.com/consul/docs/k8s/helm#v-server-exposeservice-nodeport
+    # nodePort:
+    #   http:
+    #     32080
+    #   https:
+    #     32443
   securityContext: # 服务器 Pod 的安全上下文，以 root 用户运行
     fsGroup: 2000
     runAsGroup: 2000

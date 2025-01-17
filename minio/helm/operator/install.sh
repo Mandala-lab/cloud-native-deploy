@@ -15,7 +15,6 @@ helm pull minio/operator
 
 # 解压
 tar -zxvf operator-*.tgz
-cd operator
 
 # 按需修改, 不需要修改也可启动
 # vi values.yaml
@@ -23,6 +22,5 @@ cd operator
 helm install \
   --namespace minio-operator \
   --create-namespace \
-  minio-operator . \
-  -f values.yaml
-
+  minio-operator ./operator \
+  -f ./operator/values.yaml

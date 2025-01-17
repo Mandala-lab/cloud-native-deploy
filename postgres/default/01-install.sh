@@ -7,7 +7,7 @@ cd /home/kubernetes/postgres
 
 #helm install postgres oci://registry-1.docker.io/bitnamicharts/postgresql
 
-VERSION="16.3.5"
+VERSION="16.4.2"
 # https://artifacthub.io/packages/helm/bitnami/postgresql?modal=install
 wget https://charts.bitnami.com/bitnami/postgresql-${VERSION}.tgz
 

@@ -8,8 +8,8 @@ podCIDR="10.244.0.0/16"
 devices="enp0s5"
 cilium install cilium cilium/cilium --namespace kube-system \
    --set nodeinit.enabled=true \
-	 --set k8sClientRateLimit.qps=30 \
-	 --set k8sClientRateLimit.burst=40 \
+	 --set k8sClientRateLimit.qps=50 \
+	 --set k8sClientRateLimit.burst=100 \
 	 --set rollOutCiliumPods=true \
 	 --set bpf.masquerade=true \
 	 --set bpfClockProbe=true \
@@ -18,7 +18,7 @@ cilium install cilium cilium/cilium --namespace kube-system \
 	 --set bpf.hostLegacyRouting=false \
 	 --set autoDirectNodeRoutes=true \
 	 --set localRedirectPolicy=true \
-	 --set ciliumEndpointSlice.enabled=true \
+	 --set ciliumEndpointSlice.enabled=false \
 	 --set externalIPs.enabled=true \
 	 --set hostPort.enabled=true \
 	 --set socketLB.enabled=true \
@@ -46,7 +46,7 @@ cilium install cilium cilium/cilium --namespace kube-system \
 	 --set bandwidthManager.enabled=true \
 	 --set bandwidthManager.bbr=true \
 	 --set highScaleIPcache.enabled=false \
-	 --set l2announcements.enabled=false \
+	 --set l2announcements.enabled=true \
 	 --set devices=$devices \
 	 --set l2podAnnouncements.interface=$devices \
 	 --set operator.rollOutPods=true \
@@ -54,4 +54,7 @@ cilium install cilium cilium/cilium --namespace kube-system \
 	 --set k8sServiceHost=$k8sServiceHost \
 	 --set k8sServicePort=$k8sServicePort
 
-
+cilium upgrade cilium/cilium \
+--namespace kube-system \
+--reuse-values \
+--set bgpControlPlane.enabled=true \

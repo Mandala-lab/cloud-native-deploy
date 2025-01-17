@@ -16,5 +16,6 @@ kubectl create ns dragonfly
 kubectl apply -f v1alpha1_dragonfly.yaml -n dragonfly
 
 kubectl get po,svc -n dragonfly -owide
-kubectl patch svc dragonfly-sample -n dragonfly -p '{"spec":{"type":"NodePort"}}'
+#kubectl patch svc dragonfly-sample -n dragonfly -p '{"spec":{"type":"NodePort"}}'
+kubectl patch svc dragonfly-sample -n dragonfly -p '{"spec":{"type":"LoadBalancer"}}'
 kubectl get po,svc -n dragonfly -owide

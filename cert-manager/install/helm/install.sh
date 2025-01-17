@@ -14,11 +14,11 @@ helm show values jetstack/cert-manager > values.yaml
 
 #修改 values.yaml
 cat > cert-manager-values.yaml <<EOF
-# installCRDs: true
-# prometheus:
-#   enabled: false
-# webhook:
-#   timeoutSeconds: 10
+installCRDs: true
+prometheus:
+  enabled: false
+webhook:
+  timeoutSeconds: 10
 EOF
 
 # 安装

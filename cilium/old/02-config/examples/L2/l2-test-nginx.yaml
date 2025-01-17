@@ -1,82 +1,43 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: nginx-quic
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-lb
+  name: nginx-deployment
+  labels:
+    app: nginx
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: nginx-lb
-  replicas: 4
+      app: nginx
   template:
     metadata:
       labels:
-        app: nginx-lb
+        app: nginx
     spec:
       containers:
-        - name: nginx-lb
-          #image: tinychen777/nginx-quic:latest
+        - name: nginx
           image: nginx:latest
-          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    purelb.io/service-group: layer2-ippool
-  name: nginx-lb-service
-
+  name: nginx-service
+  labels:
+    app: nginx
 spec:
-  allocateLoadBalancerNodePorts: false
-  externalTrafficPolicy: Cluster
-  internalTrafficPolicy: Cluster
-  selector:
-    app: nginx-lb
-  ports:
-    - protocol: TCP
-      port: 80 # match for service access port
-      targetPort: 80 # match for pod access port
   type: LoadBalancer
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    purelb.io/service-group: layer2-ippool
-  name: nginx-lb2-service
-
-spec:
-  allocateLoadBalancerNodePorts: false
-  externalTrafficPolicy: Cluster
-  internalTrafficPolicy: Cluster
-  selector:
-    app: nginx-lb
   ports:
-    - protocol: TCP
-      port: 80 # match for service access port
-      targetPort: 80 # match for pod access port
-  type: LoadBalancer
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    purelb.io/service-group: layer2-ippool
-  name: nginx-lb3-service
-spec:
-  allocateLoadBalancerNodePorts: false
-  externalTrafficPolicy: Cluster
-  internalTrafficPolicy: Cluster
+    - port: 80
+      targetPort: 80
+      protocol: TCP
   selector:
-    app: nginx-lb
-  ports:
-    - protocol: TCP
-      port: 80 # match for service access port
-      targetPort: 80 # match for pod access port
-  type: LoadBalancer
+    app: nginx

@@ -1,0 +1,14 @@
+# Source: https://docs.cilium.io/en/v1.15/network/lb-ipam/#lb-ipam
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "l2"
+spec:
+  # 192.168.2.120/29（包含 8 个 IP：192.168.2.120 到 192.168.2.127）
+  # 192.168.2.128/25（包含 128 个 IP：192.168.2.128 到 192.168.2.255
+  blocks:
+    - cidr: "192.168.3.120/29"
+    - cidr: "192.168.3.128/25"
+
+# kubectl get ippools
+# kubectl get ippools/default -o jsonpath='{.status.conditions[?(@.type=="cilium.io/PoolConflict")].message}'

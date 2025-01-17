@@ -3,6 +3,11 @@
 mkdir -p  /home/kubernetes/metrics-server
 cd  /home/kubernetes/metrics-server || eixt
 
+# 可以把它替换成个人仓库的镜像
+# image: registry.k8s.io/metrics-server/metrics-server:v0.7.2
+# image: ccr.ccs.tencentyun.com/dist/metrics-server:v0.7.2
+# imagePullPolicy: Always
+
 wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 kubectl apply -f components.yaml
 kubectl -n kube-system edit deployment metrics-server
@@ -10,6 +15,9 @@ kubectl -n kube-system edit deployment metrics-server
 # args:
 #  - --kubelet-insecure-tls
 #
+
+kubectl top node
+kubectl top po
 
 #cat > kubectl-top.sh <<EOF
 #apiVersion: v1
