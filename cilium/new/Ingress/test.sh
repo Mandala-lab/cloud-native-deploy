@@ -55,4 +55,7 @@ k apply -f test-foo.yaml
 k apply -f test-cilium-ingress.yaml
 
 k get ingress
--H 'host: foo.bar.com'
+
+# 把foo-service的IP替换
+echo "192.168.3.127 foo.bar.com" | tee -a /etc/hosts
+curl foo.bar.com/foo
