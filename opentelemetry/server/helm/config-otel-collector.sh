@@ -4,6 +4,9 @@ set -o posix errexit -o pipefail
 
 # 配置: https://opentelemetry.io/docs/collector/configuration/
 
+mkdir -pv /home/kubernetes/opentelemetry
+cd /home/kubernetes/opentelemetry || exit
+
 # opentelemetry-collector
 otel_collector_name="otel"
 otel_collector_namespace="observability"

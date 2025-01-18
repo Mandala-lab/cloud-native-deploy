@@ -2,6 +2,8 @@
 # 启用 POSIX 模式并设置严格的错误处理机制
 set -o posix errexit -o pipefail
 
+# 状态: 未完成, minio s3配置有问题
+
 mkdir -pv /home/kubernetes/loki
 cd /home/kubernetes/loki || exit
 
@@ -10,7 +12,7 @@ helm search repo grafana/loki
 helm pull grafana/loki --untar
 
 # s3 s3://access_key:secret_access_key@custom_endpoint/bucket_name
-export MINIO_URL="s3://2BALLOaZiWE8AYhRnIbA:TsNivDuv2NkOFxs9sUWFfRfXZIIjzXz4aLypta8q@myminio-hl.minio-tenant.svc.cluster.local:9000"
+export MINIO_URL="s3://ymL4GnbPgbwTM29nQqMY:92edNpF4gG6RL02sDyUrEZqduikVo1lHXnbqrn2e@myminio-hl.minio-tenant.svc.cluster.local:9000/loki"
 cat > minio-values.yaml <<EOF
 # Example configuration for Loki with S3 storage
 loki:
@@ -110,7 +112,7 @@ EOF
 
 # otel转发到loki
 #values.yaml
-cat otel-to-loki.yaml <<EOF
+cat > otel-to-loki.yaml <<EOF
 loki
   limits_config:
     allow_structured_metadata: true

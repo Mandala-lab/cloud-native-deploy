@@ -2,16 +2,19 @@
 # 启用 POSIX 模式并设置严格的错误处理机制
 set -o posix errexit -o pipefail
 
+mkdir -pv /home/kubernetes/opentelemetry
+cd /home/kubernetes/opentelemetry || exit
+
 otel_collector_name="otel-loki"
-loki_namespace="loki"
+loki_namespace="loki-stack"
 otel_collector_namespace="observability"
 receivers_otel_grpc_url="0.0.0.0:4317"
 receivers_otel_http_url="0.0.0.0:4318"
 #export_otel_http_url="http://node9.api-r.com:30253"
 #export_otel_grpc_url="http://node9.api-r.com:32299"
-export_otel_grpc_url="simple-prod-collector.${otel_collector_namespace}.svc.cluster.local:4317"
-export_otel_http_url="simple-prod-collector.${otel_collector_namespace}.svc.cluster.local:4318"
-export_logs_loki_url="loki-distributor.${loki_namespace}.svc.cluster.local:3100"
+export_otel_grpc_url="jaeger-collector.${otel_collector_namespace}.svc.cluster.local:4317"
+export_otel_http_url="http://jaeger-collector.${otel_collector_namespace}.svc.cluster.local:4318"
+export_logs_loki_url="loki.${loki_namespace}.svc.cluster.local:3100"
 
 kubectl delete -f otel-loki.yaml || true
 cat > otel-loki.yaml <<EOF
@@ -83,4 +86,5 @@ EOF
 
 kubectl apply -f otel-loki.yaml
 sleep 1
-kubectl patch -n $otel_collector_namespace svc $otel_collector_name-collector -p '{"spec":{"type":"NodePort"}}'
+kubectl patch -n observability svc otel-loki-collector  -p '{"spec":{"type":"LoadBalancer"}}'
+#kubectl patch -n $otel_collector_namespace svc $otel_collector_name-collector -p '{"spec":{"type":"NodePort"}}'

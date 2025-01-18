@@ -16,3 +16,19 @@ kubectl get po -n victoriametrics
 # http://victoriametrics-victoria-metrics-cluster-vmselect.victoriametrics:8481/select/0/prometheus
 
 # 单机版的URL: http://victoriametrics-victoria-metrics-cluster-vmselect.victoriametrics:8428
+
+# 集群版 UI
+# http://192.168.3.133:8481/select/0/vmui/
+
+# 更多接口: https://docs.victoriametrics.com/cluster-victoriametrics/
+# /prometheus/api/v1/query
+# /prometheus/api/v1/query_range
+# /prometheus/api/v1/series
+# /prometheus/api/v1/labels
+# /prometheus/api/v1/label/<label_name>/values
+# /prometheus/api/v1/status/active_queries
+# /prometheus/api/v1/status/top_queries
+# /prometheus/api/v1/status/tsdb
+# /prometheus/api/v1/export
+# /prometheus/api/v1/export/csv
+# /vmui
