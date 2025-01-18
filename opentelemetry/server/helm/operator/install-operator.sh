@@ -15,6 +15,7 @@ helm repo update
 helm pull open-telemetry/opentelemetry-operator --untar
 cd opentelemetry-operator/
 
+# 仓库: git clone --depth 1 https://www.ghproxy.cn/https://github.com/open-telemetry/opentelemetry-operator-helm-charts.git
 # 配置文件参考: https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-operator/values.yaml
 
 # helm uninstall opentelemetry-operator

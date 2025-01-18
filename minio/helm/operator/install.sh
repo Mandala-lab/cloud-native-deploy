@@ -24,6 +24,3 @@ helm install \
   --create-namespace \
   minio-operator ./operator \
   -f ./operator/values.yaml
-
-kubectl patch svc prometheus-k8s -n monitoring -p '{"spec":{"type":"LoadBalancer"}}'
-kubectl patch svc grafana -n monitoring -p '{"spec":{"type":"LoadBalancer"}}'

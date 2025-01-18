@@ -20,7 +20,7 @@ func initTracer() func(context.Context) error {
 		otlptracegrpc.NewClient(
 			otlptracegrpc.WithInsecure(),
 			// otlptracegrpc.WithEndpoint("node5.apikv.com:30288"), // 修改为你的 OTEL Collector 地址和端口
-			otlptracegrpc.WithEndpoint("node10.apikv.com:32163"), // 修改为你的 OTEL Collector 地址和端口
+			otlptracegrpc.WithEndpoint("192.168.3.128:4317"), // 修改为你的 OTEL Collector 地址和端口
 		),
 	)
 	if err != nil {

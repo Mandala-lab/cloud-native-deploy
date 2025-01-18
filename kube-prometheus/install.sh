@@ -19,3 +19,6 @@ kubectl wait \
 kubectl apply -f manifests/
 
 set +x
+
+kubectl patch svc prometheus-k8s -n monitoring -p '{"spec":{"type":"LoadBalancer"}}'
+kubectl patch svc grafana -n monitoring -p '{"spec":{"type":"LoadBalancer"}}'

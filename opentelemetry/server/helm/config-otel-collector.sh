@@ -73,4 +73,5 @@ EOF
 kubectl delete -f opentelemetry-collector.yaml || true
 kubectl apply -f opentelemetry-collector.yaml
 sleep 1
-kubectl patch -n $otel_collector_namespace svc otel-collector -p '{"spec":{"type":"NodePort"}}'
+#kubectl patch -n $otel_collector_namespace svc otel-collector -p '{"spec":{"type":"NodePort"}}'
+kubectl patch -n $otel_collector_namespace svc otel-collector -p '{"spec":{"type":"LoadBalancer"}}'
