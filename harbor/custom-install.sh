@@ -181,7 +181,13 @@ helm install harbor ./harbor -f harbor-values.yaml \
   --create-namespace \
   --dry-run | grep externalURL
 
-echo "harbor.localhost.com" | tee -a /etc/hosts
+helm uninstall harbor -n harbor || true
+helm install harbor ./harbor -f harbor-values.yaml \
+  -n harbor \
+  --create-namespace
+
+LoadBalancerHOST="192.168.3.100"
+echo "$LoadBalancerHOST harbor.localhost.com" | tee -a /etc/hosts
 cat /etc/hosts
 
 kubectl get po,svc -n harbor -owide

@@ -32,4 +32,4 @@ kubectl apply -f jaeger.yml -n observability
 
 # 启用UI的NodePort类型的转发
 #kubectl patch svc jaeger-query -n observability -p '{"spec":{"type":"NodePort"}}'
-kubectl patch svc jaeger-query -n observability -p '{"spec":{"type":"LoadBalancer"}}'
+kubectl apply -f service.yaml -n observability
