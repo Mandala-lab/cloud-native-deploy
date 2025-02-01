@@ -35,7 +35,30 @@ kubectl get secrets -n minio-tenant \
 myminio-env-configuration \
 -ojsonpath='{.data.config\.env}' | base64 -d
 
-# NodePort
+svc_type="NodePort"
+#SVC_TYPE="LoadBalancer"
 kubectl patch svc myminio-console -n minio-tenant -p '{"spec":{"type":"NodePort"}}'
-# LoadBalancer
-#kubectl patch svc myminio-console -n minio-tenant -p '{"spec":{"type":"LoadBalancer"}}'
+
+kubectl get svc/myminio-hl -n minio-tenant -o yaml > myminio-hl-svc.yaml.back
+kubectl delete svc myminio-hl -n minio-tenant
+
+cat > myminio-hl-svc.yaml <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    v1.min.io/tenant: myminio
+  name: myminio-hl
+  namespace: minio-tenant
+spec:
+  ports:
+  - name: https-minio
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
+  publishNotReadyAddresses: true
+  selector:
+    v1.min.io/tenant: myminio
+  type: $svc_type
+EOF
+kubectl apply -f myminio-hl-svc.yaml
