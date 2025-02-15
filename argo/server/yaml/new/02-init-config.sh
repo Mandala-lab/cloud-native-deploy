@@ -5,10 +5,14 @@ set -o posix errexit -o pipefail
 # 获取初始化的密码, 用户名是admin
 argocd admin initial-password -n argocd
 
+argocd_sever="192.168.3.125"
+password="D7V-xBgeRI9Hyviq"
+echo $argocd_sever
+echo $password
 argocd login \
-  node10.apikv.com:30789 \
+  $argocd_sever \
   --username admin \
-  --password <password> \
+  --password $password \
   --insecure
 
 # 注册集群以将应用程序部署到该集群(可选, 推荐)

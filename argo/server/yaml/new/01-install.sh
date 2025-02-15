@@ -24,6 +24,38 @@ kubectl apply -f install.yaml -n argocd
 #kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 
 # 修改为NodePort
-kubectl patch svc argocd-server -n argocd -p '{"spec":{"type":"NodePort"}}'
+#kubectl patch svc argocd-server -n argocd -p '{"spec":{"type":"NodePort"}}'
 
 # Ingress: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/
+
+cat > argocd-server-svc.ymal <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"server","app.kubernetes.io/name":"argocd-server","app.kubernetes.io/part-of":"argocd"},"name":"argocd-server","namespace":"argocd"},"spec":{"ports":[{"name":"http","port":80,"protocol":"TCP","targetPort":8080},{"name":"https","port":443,"protocol":"TCP","targetPort":8080}],"selector":{"app.kubernetes.io/name":"argocd-server"}}}
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: argocd-server
+    app.kubernetes.io/part-of: argocd
+  name: argocd-server
+  namespace: argocd
+
+spec:
+
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: argocd-server
+  sessionAffinity: None
+  type: LoadBalancer
+EOF
+kubectl apply -f argocd-server-svc.ymal

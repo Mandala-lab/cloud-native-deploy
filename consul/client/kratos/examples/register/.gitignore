@@ -29,7 +29,7 @@ Thumbs.db
 # project
 *.cert
 *.key
-*.log
+*.helper
 bin/
 
 # Develop tools

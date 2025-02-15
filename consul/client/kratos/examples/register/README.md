@@ -84,7 +84,7 @@ var ProviderSet = wire.NewSet(NewHTTPServer, NewRegistrar)
 
 ```go
 func newApp(
-logger log.Logger,
+logger helper.Logger,
 gs *grpc.Server,
 hs *http.Server,
 reg registry.Registrar, // 从server层作为依赖注入

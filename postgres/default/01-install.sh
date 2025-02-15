@@ -25,7 +25,7 @@ helm install postgres ./postgresql \
   --set global.postgresql.auth.username="postgres" \
   --set global.postgresql.auth.password="postgres" \
   --set global.postgresql.auth.database="postgres" \
+  --set primary.service.type=NodePort \
+  --set global.postgresql.service.ports.postgresql="5432" \
   --set persistence.existingClaim=postgresql-pvc-claim \
   --set volumePermissions.enabled=true \
-  --set global.postgresql.service.ports.postgresql="5432" \
-  --set primary.service.type=NodePort

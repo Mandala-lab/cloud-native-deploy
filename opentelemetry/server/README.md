@@ -228,7 +228,7 @@ NodePort 类型就需要更改4317所对应的端口
 package main
 
 import (
-	"log"
+	"helper"
 	"os"
 	"time"
 
@@ -303,7 +303,7 @@ func tracerProvider() error {
 func Server2(c *gin.Context) {
 	dsn := "postgresql://root:msdnmm@192.168.2.158:5432/postgres"
 	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags),
+		helper.New(os.Stdout, "\r\n", helper.LstdFlags),
 		logger.Config{
 			LogLevel: logger.Info,
 			Colorful: true,
@@ -455,7 +455,7 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.25.0"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/helper"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/http"
 
@@ -516,7 +516,7 @@ func initTracerProvider(ctx context.Context, res *resource.Resource, conn string
 func NewMiddleware(
 	ac *conf.Auth,
 	c *conf.Server,
-	logger log.Logger,
+	logger helper.Logger,
 ) http.ServerOption {
 	// casbin start
 	m, _ := model.NewModelFromFile("../../configs/authz/authz_model.conf")
@@ -546,7 +546,7 @@ func NewMiddleware(
 func NewHTTPServer(
 	ac *conf.Auth,
 	c *conf.Server,
-	logger log.Logger,
+	logger helper.Logger,
 	tr *conf.Trace,
 	greeter *service.GreeterService,
 ) *http.Server {
@@ -564,13 +564,13 @@ func NewHTTPServer(
 		),
 	)
 	if err != nil {
-		log.Fatal(err)
+		helper.Fatal(err)
 	}
 
 	// shutdownTracerProvider, err := initTracerProvider(ctx, res, tr.Jaeger.Http.Endpoint)
 	_, err2 := initTracerProvider(ctx, res, tr.Jaeger.Http.Endpoint)
 	if err2 != nil {
-		log.Fatal(err)
+		helper.Fatal(err)
 	}
 	// trace end
 
