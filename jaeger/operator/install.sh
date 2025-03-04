@@ -8,7 +8,7 @@ cd /home/kubernetes/jaeger
 # 安装operator
 kubectl create ns observability
 # https://github.com/jaegertracing/jaeger-operator/releases
-VERSION="v1.62.0"
+VERSION="v1.65.0"
 wget https://github.com/jaegertracing/jaeger-operator/releases/download/${VERSION}/jaeger-operator.yaml
 kubectl apply -f jaeger-operator.yaml
 
@@ -31,5 +31,5 @@ EOF
 kubectl apply -f jaeger.yml -n observability
 
 # 启用UI的NodePort类型的转发
-#kubectl patch svc jaeger-query -n observability -p '{"spec":{"type":"NodePort"}}'
+# kubectl patch svc jaeger-query -n observability -p '{"spec":{"type":"NodePort"}}'
 kubectl apply -f service.yaml -n observability

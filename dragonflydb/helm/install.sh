@@ -7,7 +7,7 @@ set -o posix errexit -o pipefail
 # VERSION=v1.26.1
 #helm upgrade --install dragonfly oci://ghcr.io/dragonflydb/dragonfly/helm/dragonfly--version $VERSION
 
-VERSION=v1.26.1
+VERSION=v1.27.1
 helm pull oci://ghcr.io/dragonflydb/dragonfly/helm/dragonfly --version $VERSION
 
 tar -zxvf dragonfly-$VERSION.tgz
@@ -29,7 +29,7 @@ image:
   repository: docker.dragonflydb.io/dragonflydb/dragonfly
 service:
   # -- Service type to provision. Can be NodePort, ClusterIP or LoadBalancer
-  type: LoadBalancer
+  type: NodePort
   port: 6379
 serviceMonitor:
   # -- If true, a ServiceMonitor CRD is created for a prometheus operator
